@@ -103,9 +103,7 @@ QRgb Transformation::getPixel(int x, int y, Mode mode)
  */
 QRgb Transformation::getPixelCyclic(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return image->pixel(x,y);
+	return image->pixel(x%image->width(),y%image->height());
 }
 
 /**
@@ -114,7 +112,8 @@ QRgb Transformation::getPixelCyclic(int x, int y)
   */
 QRgb Transformation::getPixelNull(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	if(x<0 || y<0 || image->width()<x || image->height()<y)
+		return qRgb(0,0,0);
 
     return image->pixel(x,y);
 }
@@ -126,7 +125,15 @@ QRgb Transformation::getPixelNull(int x, int y)
   */
 QRgb Transformation::getPixelRepeat(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	if(x < 0)
+		x = 0;
+	else if (image->width() < x)
+		x = image->width();
+               
+	if(y < 0)
+		y = 0;
+	else if ( image->height() < y)
+		y = image->height();
 
     return image->pixel(x,y);
 }
@@ -137,10 +144,28 @@ math::matrix<double> Transformation::getWindow(int x, int y, int size,
                                                Mode mode = RepeatEdge)
 {
     math::matrix<double> window(size,size);
-
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return window;
+ 
+	int n = size/2;
+       
+	int (*function)(QRgb);
+ 
+	if(channel == RChannel)
+		function = &qRed;
+	else if(channel == GChannel)
+		function = &qGreen;
+	else if(channel == BChannel)
+		function = &qBlue;
+	else if(channel == LChannel)
+		function = &qGray;
+ 
+	for(int i=0; i<=n; i++)
+		for(int j=0; j<=n; j++){
+			window(n-i, n-j) = function(getPixel(x-i,y-j,mode));
+			window(n+i, n+j) = function(getPixel(x+i,y+j,mode));
+			window(n+i, n-j) = function(getPixel(x+i,y-j,mode));
+			window(n-i, n+j) = function(getPixel(x-i,y+j,mode));
+		}
+	return window;
 }
 
 ImageViewer* Transformation::getSupervisor()
