@@ -64,12 +64,12 @@ PNM* Convolution::convolute(math::matrix<double> mask, Mode mode = RepeatEdge)
 		{
 			for(int z=0; z<channels.size(); z++)
 			{				
-				math::matrix<double> accum = join(mask, getWindow(x, y, mask.RowNo(), channels[c], mode));
+                /*math::matrix<double> accum = join(mask, getWindow(x, y, mask.RowNo(), channels[c], mode));
 
 				result[c] = sum(accum);
 				if(weight != 0) result[z]  /= weight;
 				if(result[z]  > 255) result[c]  = 255;
-				else if(result[z]  < 0) result[c]  = 0;
+                else if(result[z]  < 0) result[c]  = 0;*/
 			}
 
 			if(image->format() == QImage::Format_Indexed8) newImage->setPixel(x, y, result[0]);
