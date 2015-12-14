@@ -2,37 +2,35 @@
 
 /** Overloaded constructor */
 Convolution::Convolution(PNM* img) :
-    Transformation(img)
+	Transformation(img)
 {
 }
 
 Convolution::Convolution(PNM* img, ImageViewer* iv) :
-    Transformation(img, iv)
+	Transformation(img, iv)
 {
 }
 
 /** Returns a convoluted form of the image */
 PNM* Convolution::transform()
 {
-    return convolute(getMask(3, Normalize), RepeatEdge);
+	return convolute(getMask(3, Normalize), RepeatEdge);
 }
 
 /** Returns a sizeXsize matrix with the center point equal 1.0 */
 math::matrix<double> Convolution::getMask(int size, Mode mode = Normalize)
 {
-    math::matrix<double> mask(size, size);
-
-	int n=size/2;
-	
-	for(int i=0; i<=n; i++){
-		for(int j=0; j<=n; j++){
-			mask(i,j)=0.0;
+	math::matrix<double> mask(size, size);
+	for(int x=0; x<size; x++)
+	{
+		for(int y=0; y<size; y++)
+		{
+			mask(x, y) = 0;
 		}
 	}
-
 	mask(size/2, size/2) = 1;
 
-    return mask;
+	return mask;
 }
 
 /** Does the convolution process for all pixels using the given mask. */
@@ -62,14 +60,14 @@ PNM* Convolution::convolute(math::matrix<double> mask, Mode mode = RepeatEdge)
 	{
 		for(int y=0; y<height; y++)
 		{
-			for(int z=0; z<channels.size(); z++)
+			for(int c=0; c<channels.size(); c++)
 			{				
 				math::matrix<double> accum = join(mask, getWindow(x, y, mask.RowNo(), channels[c], mode));
 
 				result[c] = sum(accum);
-				if(weight != 0) result[z]  /= weight;
-				if(result[z]  > 255) result[c]  = 255;
-				else if(result[z]  < 0) result[c]  = 0;
+				if(weight != 0) result[c]  /= weight;
+				if(result[c]  > 255) result[c]  = 255;
+				else if(result[c]  < 0) result[c]  = 0;
 			}
 
 			if(image->format() == QImage::Format_Indexed8) newImage->setPixel(x, y, result[0]);
@@ -81,8 +79,8 @@ PNM* Convolution::convolute(math::matrix<double> mask, Mode mode = RepeatEdge)
 }
 
 /** Joins to matrices by multiplying the A[i,j] with B[i,j].
-  * Warning! Both Matrices must be squares with the same size!
-  */
+* Warning! Both Matrices must be squares with the same size!
+*/
 const math::matrix<double> Convolution::join(math::matrix<double> A, math::matrix<double> B)
 {
 	int size = A.RowNo();
@@ -101,10 +99,17 @@ const math::matrix<double> Convolution::join(math::matrix<double> A, math::matri
 /** Sums all of the matrixes elements */
 const double Convolution::sum(const math::matrix<double> A)
 {
-    double sum = 0.0;
+	double sum = 0.0;
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	int rows = A.RowNo();
+	int cols = A.ColNo();
+	for(int r=0; r<rows; r++)
+	{
+		for(int c=0; c<cols; c++)
+		{
+			sum += A(r, c);
+		}
+	}
 
-    return sum;
-
+	return sum;
 }

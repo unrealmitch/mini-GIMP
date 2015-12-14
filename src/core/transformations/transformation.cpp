@@ -103,7 +103,11 @@ QRgb Transformation::getPixel(int x, int y, Mode mode)
  */
 QRgb Transformation::getPixelCyclic(int x, int y)
 {
-	return image->pixel(x%image->width(),y%image->height());
+	x %= image->width();
+    y %= image->height();
+    if(x < 0) x += image->width();
+    if(y < 0) y += image->height();
+    return image->pixel(x, y);
 }
 
 /**
@@ -112,10 +116,14 @@ QRgb Transformation::getPixelCyclic(int x, int y)
   */
 QRgb Transformation::getPixelNull(int x, int y)
 {
-	if(x<0 || y<0 || image->width()<x || image->height()<y)
-		return qRgb(0,0,0);
-
-    return image->pixel(x,y);
+	if(x >= image->width() || x < 0 || y < 0 || y >= image->height())
+	{
+         return qRgb(0,0,0);
+	}
+	else
+	{
+		return image->pixel(x,y);
+	}
 }
 
 /**
@@ -125,15 +133,11 @@ QRgb Transformation::getPixelNull(int x, int y)
   */
 QRgb Transformation::getPixelRepeat(int x, int y)
 {
-	if(x < 0)
-		x = 0;
-	else if (image->width() < x)
-		x = image->width();
-               
-	if(y < 0)
-		y = 0;
-	else if ( image->height() < y)
-		y = image->height();
+	if(x < 0) x = 0;
+    else if(x >= image->width()) x = image->width()-1;
+
+    if(y < 0) y = 0;
+    else if(y >= image->height()) y = image->height()-1;
 
     return image->pixel(x,y);
 }
@@ -144,28 +148,30 @@ math::matrix<double> Transformation::getWindow(int x, int y, int size,
                                                Mode mode = RepeatEdge)
 {
     math::matrix<double> window(size,size);
- 
-	int n = size/2;
-       
-	int (*function)(QRgb);
- 
-	if(channel == RChannel)
-		function = &qRed;
-	else if(channel == GChannel)
-		function = &qGreen;
-	else if(channel == BChannel)
-		function = &qBlue;
-	else if(channel == LChannel)
-		function = &qGray;
- 
-	for(int i=0; i<=n; i++)
-		for(int j=0; j<=n; j++){
-			window(n-i, n-j) = function(getPixel(x-i,y-j,mode));
-			window(n+i, n+j) = function(getPixel(x+i,y+j,mode));
-			window(n+i, n-j) = function(getPixel(x+i,y-j,mode));
-			window(n-i, n+j) = function(getPixel(x-i,y+j,mode));
-		}
-	return window;
+
+    int x_offset = x - size/2;
+    int y_offset = y - size/2;
+
+    for(int ix=0; ix<size; ix++)
+	{
+        for(int iy=0; iy<size; iy++)
+		{
+            QRgb color = getPixel(x_offset + ix, y_offset + iy, mode);
+            switch(channel)
+			{
+				case RChannel:
+					window(ix, iy) = qRed(color);
+					break;
+				case GChannel:
+					window(ix, iy) = qGreen(color);
+					break;
+				default:
+					window(ix, iy) = qBlue(color);
+            }
+        }
+    }
+
+    return window;
 }
 
 ImageViewer* Transformation::getSupervisor()

@@ -12,7 +12,8 @@ BlurUniform::BlurUniform(PNM* img, ImageViewer* iv) :
 
 math::matrix<double> BlurUniform::getMask(int size, Mode)
 {
-	Mode mode= RepeatEdge;
+	
+Mode mode= RepeatEdge;
     math::matrix<double> mask(size, size);
 
    for (int i=0;i<size;i++){

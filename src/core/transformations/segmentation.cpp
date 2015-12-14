@@ -1,4 +1,4 @@
-#include "Segmentation.h"
+#include "segmentation.h"
 
 Segmentation::Segmentation(PNM* img) :
     Transformation(img)

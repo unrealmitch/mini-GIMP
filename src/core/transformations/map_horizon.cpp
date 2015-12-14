@@ -18,7 +18,7 @@ PNM* MapHorizon::transform()
         height = image->height();
 
     double scale     = getParameter("scale").toDouble();
-    int    sun_alpha = getParameter("alpha").toInt();
+    int    sunAlpha = getParameter("alpha").toInt();
     int dx, dy;
 
     switch (getParameter("direction").toInt())
@@ -35,7 +35,28 @@ PNM* MapHorizon::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    PNM* mapHeight = MapHeight(image).transform();
+    for (int x=0; x<width; x++)
+	{
+        for (int y=0; y<height; y++)
+		{
+            double alpha = 0.0;
+            int currH = qRed(mapHeight->pixel(x,y));
+            for (int k=x+dx, l=y+dy; k < width && l < height && k >= 0 && l >= 0; k += dx, l += dy)
+            {
+                int rayH = qRed(mapHeight->pixel(k,l));
+                if (currH < rayH)
+				{
+                    double dist = sqrt(pow(k - x, 2) + pow(l - y, 2)) * scale;
+                    double rayAlpha = atan((rayH - currH) / dist) * 180./3.14;
+                    if(rayAlpha > alpha)  alpha = rayAlpha;
+                }
+            }
+            double delta = alpha - sunAlpha;
+            if (delta <= 0) newImage->setPixel(x, y, 255);
+            else newImage->setPixel(x, y, cos(delta * 3.14/180.) * 255);
+        }
+    }
 
     return newImage;
 }
