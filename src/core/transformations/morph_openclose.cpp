@@ -1,7 +1,7 @@
 #include "morph_openclose.h"
-
 #include "morph_erode.h"
 #include "morph_dilate.h"
+
 
 MorphOpenClose::MorphOpenClose(PNM* img) :
     MorphologicalOperator(img), m_type(Open)
