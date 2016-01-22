@@ -18,7 +18,6 @@ PNM* MorphOpenClose::transform()
     int size = getParameter("size").toInt();;
     SE shape = (SE) getParameter("shape").toInt();
     m_type = (Type) getParameter("type").toInt();
-  PNM* newImage = new PNM(image->width(), image->height(), QImage::Format_RGB32);
 
    if (m_type==Open)
    {
