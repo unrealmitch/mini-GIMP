@@ -183,3 +183,4 @@ void EdgeCanny::checkHysterysis(int i, int j, int di, int dj, int direction, int
 {
     qDebug() << Q_FUNC_INFO << "Not implemented yet!";
 }
+
