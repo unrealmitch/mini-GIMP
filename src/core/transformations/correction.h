@@ -11,10 +11,8 @@ public:
 
     virtual PNM* transform();
 
-protected:
-    inline const int    add(double, double);
-    inline const double mult(int, double);
-    inline const int    power(int, double);
+private:
+    int LUT[PIXEL_VAL_MAX+1];
 };
 
 #endif // CORRECTION_H

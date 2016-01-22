@@ -24,13 +24,13 @@ PNM* BlurGaussian::transform()
 math::matrix<double> BlurGaussian::getMask(int size, Mode)
 {
     math::matrix<double> mask(size, size);
-	Mode mode = RepeatEdge;
-   for (int i=0;i<radius;i++){
-	     for (int j=0;j<radius;j++){
+    //Mode mode = RepeatEdge;
+   for (int i=0;i<size;i++){
+         for (int j=0;j<size;j++){
 			 mask(i,j)=getGauss(i,j,sigma);
 		 }
    }
-   convolute(mask, mode);
+   //convolute(mask, mode);
     return mask;
 }
 

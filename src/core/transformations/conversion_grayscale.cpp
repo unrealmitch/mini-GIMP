@@ -25,22 +25,26 @@ PNM* ConversionGrayscale::transform()
 
     if (image->format() == QImage::Format_Mono)
     {
-        qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-    }
-    else // if (image->format() == QImage::Format_RGB32)
-    {
-        // Iterate over image space
-        for (int x=0; x<width; x++)
-            for (int y=0; y<height; y++)
+        for (int x = 0; x<width; x++)
+            for (int y = 0; y<height; y++)
             {
-                QRgb pixel = image->pixel(x,y); // Getting the pixel(x,y) value
+            QColor color = QColor::fromRgb(image->pixel(x, y)); // Getting the pixel(x,y) value
 
-                int r = qRed(pixel);    // Get the 0-255 value of the R channel
-                int g = qGreen(pixel);  // Get the 0-255 value of the G channel
-                int b = qBlue(pixel);   // Get the 0-255 value of the B channel
-                //QRgb newPixel = (r+g+b)/3; // RGB to Grayscale average method
-                QRgb newPixel = 0.21*r+0.72*g+0.07*b; // RGB to Grayscale luminosity method
-                newImage->setPixel(x,y, qGray(newPixel));
+            newImage->setPixel(x, y, color == Qt::white ? PIXEL_VAL_MAX : PIXEL_VAL_MIN);
+            }
+    }
+    else
+    {
+        for (int x = 0; x<width; x++)
+            for (int y = 0; y<height; y++)
+            {
+            QRgb pixel = image->pixel(x, y);
+
+            int r = qRed(pixel);
+            int g = qGreen(pixel);
+            int b = qBlue(pixel);
+            int new_color = (int)((0.6*r) + (0.3*g) + (0.1*b));
+            newImage->setPixel(x, y, new_color);
             }
     }
 
