@@ -60,3 +60,4 @@ PNM* MapHorizon::transform()
 
     return newImage;
 }
+

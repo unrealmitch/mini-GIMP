@@ -78,3 +78,4 @@ math::matrix<double>* EdgeSobel::rawVerticalDetection()
 
     return y_gradient;
 }
+

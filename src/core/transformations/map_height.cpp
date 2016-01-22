@@ -17,7 +17,27 @@ PNM* MapHeight::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    if (image->format() == QImage::Format_Mono)
+    {
+
+        for (int x = 0; x<width; x++)
+            for (int y = 0; y<height; y++)
+            {
+            QColor color = QColor::fromRgb(image->pixel(x, y));
+            newImage->setPixel(x, y, color == Qt::white ? PIXEL_VAL_MAX : PIXEL_VAL_MIN);
+            }
+    }
+    else
+    {
+        for (int x = 0; x<width; x++)
+            for (int y = 0; y<height; y++)
+            {
+            QRgb pixel = image->pixel(x, y);
+            int new_color = (int)((0.6*qRed(pixel)) + (0.3*qGreen(pixel)) + (0.1*qBlue(pixel)));
+            newImage->setPixel(x, y, new_color);
+            }
+    }
 
     return newImage;
 }
+
