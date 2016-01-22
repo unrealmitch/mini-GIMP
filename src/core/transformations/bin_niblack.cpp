@@ -33,38 +33,42 @@ PNM* BinarizationNiblack::transform()
     //For each pixel in the original image we crop a window of size r
     for (int x=0; x<width; x++)
     {
-        emit progress(100*x/double(image->width()));
+        emit progress(100*x/double(image->width()));//Displays a loading image
 
         for (int y=0; y<height; y++)
         {
             int sumVal = 0;
 
-            //We crop a rectangle on the original image
+            /*//We crop a rectangle on the original image
             QRect rect(x-half_r,y-half_r,r,r);
-            QImage cropped = image->copy(rect);
+            QImage cropped = image->copy(rect);*/
+
+            math::matrix<double> windowR(r,r);
+            math::matrix<double> windowG(r,r);
+            math::matrix<double> windowB(r,r);
+            windowR = Transformation::getWindow(x,y,r,RChannel,RepeatEdge);
+            windowG = Transformation::getWindow(x,y,r,GChannel,RepeatEdge);
+            windowB = Transformation::getWindow(x,y,r,BChannel,RepeatEdge);
+
+            //1--
+            math::matrix<double> window(r,r);
+            for (int i=0; i< window.RowNo(); i++)
+                for (int j=0; j< window.ColNo(); j++)
+                    window(i,j) = qRgb(windowR(i,j),windowG(i,j),windowB(i,j));
+
 
             //We calculate u
-            for (int i=0; i< cropped.width(); i++)
-                for (int j=0; j< cropped.height(); j++)
-                {
-                    if(qGray(cropped.pixel(i,j)) >= 0 || qGray(cropped.pixel(i,j)) <= 255)
-                        sumVal += qGray(cropped.pixel(i,j));
-                    else
-                        sumVal += 0;
-                }
+            for (int i=0; i< window.RowNo(); i++)
+                for (int j=0; j< window.ColNo(); j++)
+                    sumVal += qGray(window(i,j));
 
             u = sumVal/pow(r,2);
 
             //Then, we calculate sigma
             sumVal = 0;
-            for (int i=0; i< cropped.width(); i++)
-                for (int j=0; j< cropped.height(); j++)
-                {
-                    if(qGray(cropped.pixel(i,j)) >= 0 || qGray(cropped.pixel(i,j)) <= 255)
-                        sumVal += pow(cropped.pixel(i,j) - u,2)/pow(r,2);
-                    else
-                        sumVal += pow(u,2)/pow(r,2);
-                }
+            for (int i=0; i< window.RowNo(); i++)
+                for (int j=0; j< window.ColNo(); j++)
+                    pow(window(i,j) - u,2)/pow(r,2);
 
             sigma = sqrt(sumVal);
 

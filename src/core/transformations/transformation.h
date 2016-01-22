@@ -26,7 +26,7 @@ class Transformation : public QThread
     Q_OBJECT
 public:
     enum Mode    {CyclicEdge, NullEdge, RepeatEdge, Normalize, Cut};
-    enum Channel {RChannel, GChannel, BChannel, LChannel};
+    enum Channel {RChannel, GChannel, BChannel, LChannel, RGBChannel};
 
     explicit Transformation(PNM*);
     explicit Transformation(PNM*, ImageViewer*);

@@ -157,6 +157,8 @@ math::matrix<double> Transformation::getWindow(int x, int y, int size,
 		function = &qBlue;
 	else if(channel == LChannel)
 		function = &qGray;
+   /* else if(channel == RGBChannel)//Added for full rgb channnel
+        function = &qRgb;*/
  
 	for(int i=0; i<=n; i++)
 		for(int j=0; j<=n; j++){
