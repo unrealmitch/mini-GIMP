@@ -87,7 +87,7 @@ int NoiseBilateral::getNeighbours(int x, int y, Channel channel)
      for (int i=0; i<matrix.RowNo();i++){
          for (int j=0; j<matrix.ColNo();j++){
              grans=g(i,j,sigma_d)*r(i,j,sigma_r);
-             val+=okno(i,j)*grans;
+             val+=matrix(i,j)*grans;
              k+=grans;
 		 }
 	 }

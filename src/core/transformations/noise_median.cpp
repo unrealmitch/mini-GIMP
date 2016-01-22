@@ -89,12 +89,12 @@ int NoiseMedian::getMedian(int x, int y, Channel channel)
 	   
        for (int i=0; i<matrix.ColNo();i++){
            for (int j=0; j<matrix.RowNo();j++){
-               table[licznik]=matrix(i,j);
+               table[count]=matrix(i,j);
                count++;
 		   }
 	   }
 	  
-    std::sort(&table[0],&tabale[count]);
+    std::sort(&table[0],&table[count]);
 
 return table[count/2];
 }
