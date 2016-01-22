@@ -21,10 +21,6 @@ PNM* NoiseBilateral::transform()
     for (int x=0; x<width; x++){
            for (int y=0; y<height; y++){
 		if (image->format() == QImage::Format_RGB32){
-				QRgb pixel = getPixel(x,y,mode);
-				// int r = qRed(pixel);    // Get the 0-255 value of the R channel
-             //   int g = qGreen(pixel);  // Get the 0-255 value of the G channel
-            //    int b = qBlue(pixel);
 			int r=getNeighbours(x,y,RChannel);
 
 		int 	g=getNeighbours(x,y,GChannel);
@@ -58,11 +54,8 @@ PNM* NoiseBilateral::transform()
 				  
 			 }
 
-				//int average = 0.3 * r + 0.6 * g + 0.1 * b;
-			
-			//	newImage->setPixel(x,y, average);
 			 QColor newPixel = QColor(r,g,b);
-			  newImage->setPixel(x,y, newPixel.rgb()); 
+             newImage->setPixel(x,y, newPixel.rgb());
 }
 	}
 	}
@@ -71,8 +64,7 @@ PNM* NoiseBilateral::transform()
            for (int y=0; y<height; y++)
 		
           {
-				QRgb pixel = image->pixel(x,y); // Getting the pixel(x,y) value
-
+                QRgb pixel = image->pixel(x,y);
                 int v = qGray(pixel); 
 				v=getNeighbours(x,y,LChannel);
 				newImage->setPixel(x,y, v);
@@ -86,16 +78,17 @@ int NoiseBilateral::getNeighbours(int x, int y, Channel channel)
     int sigma_d = getParameter("sigma_d").toInt();
     int sigma_r = getParameter("sigma_r").toInt();
     int radius = sigma_d;
-		Mode mode=	RepeatEdge;
-	 math::matrix<double> okno = getWindow(x,y,radius*2+1,channel,mode);
+    Mode mode=	RepeatEdge;
+
+     math::matrix<double> matrix = getWindow(x,y,radius*2+1,channel,mode);
 	 int val=0;
 	 int k=0;
-	 int kernels;
-	 for (int i=0; i<okno.RowNo();i++){
-		 for (int j=0; j<okno.ColNo();j++){
-			 kernels=g(i,j,sigma_d)*r(i,j,sigma_r);
-			 val+=okno(i,j)*kernels;
-			 k+=kernels;
+     int grans;
+     for (int i=0; i<matrix.RowNo();i++){
+         for (int j=0; j<matrix.ColNo();j++){
+             grans=g(i,j,sigma_d)*r(i,j,sigma_r);
+             val+=matrix(i,j)*grans;
+             k+=grans;
 		 }
 	 }
 
@@ -110,16 +103,10 @@ int NoiseBilateral::getNeighbours(int x, int y, Channel channel)
 
 double NoiseBilateral::g(int x, int y, int sigma_d)
 {
-	double Pi=3.14;
 	double e= 2.718281828459;
 	double g=(pow(e,-(pow(x,2)+pow(y,2)))/2*pow(sigma_d,2));
    
     return g;
-
-
-
-	
-   
 }
 
 double NoiseBilateral::r(int v, int v_ij, int sigma_r)

@@ -1,7 +1,7 @@
 #include "morph_openclose.h"
-
 #include "morph_erode.h"
 #include "morph_dilate.h"
+
 
 MorphOpenClose::MorphOpenClose(PNM* img) :
     MorphologicalOperator(img), m_type(Open)
@@ -18,7 +18,6 @@ PNM* MorphOpenClose::transform()
     int size = getParameter("size").toInt();;
     SE shape = (SE) getParameter("shape").toInt();
     m_type = (Type) getParameter("type").toInt();
-  PNM* newImage = new PNM(image->width(), image->height(), QImage::Format_RGB32);
 
    if (m_type==Open)
    {

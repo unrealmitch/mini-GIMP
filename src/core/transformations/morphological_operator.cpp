@@ -10,7 +10,6 @@ MorphologicalOperator::MorphologicalOperator(PNM* img, ImageViewer* iv) :
 {
 }
 
-// abstract
 const int MorphologicalOperator::morph(math::matrix<double>, math::matrix<bool>)
 {
     return 0;
@@ -122,24 +121,22 @@ math::matrix<bool> MorphologicalOperator::seHLine(int size)
 
 PNM* MorphologicalOperator::transform()
 {  
-	 int width  = image->width();
+    int width  = image->width();
     int height = image->height();
     int size  = getParameter("size").toInt();
     SE  shape = (MorphologicalOperator::SE) getParameter("shape").toInt();
-math::matrix<bool> shape2=getSE(size,shape);
+    math::matrix<bool> shape2=getSE(size,shape);
     PNM* newImage = new PNM(image->width(), image->height(), image->format());
-	  if (image->format() == QImage::Format_RGB32){
-   for (int x=0; x<width; x++){
+    if (image->format() == QImage::Format_RGB32){
+    for (int x=0; x<width; x++){
            for (int y=0; y<height; y++){
-			 
-			   	QRgb pixel = getPixel(x,y,RepeatEdge);
-				math::matrix<double> oknoR = getWindow(x,y,size,RChannel,RepeatEdge);
-				math::matrix<double> oknoG = getWindow(x,y,size,GChannel,RepeatEdge);
-				math::matrix<double> oknoB = getWindow(x,y,size,BChannel,RepeatEdge);
+                math::matrix<double> cR = getWindow(x,y,size,RChannel,RepeatEdge);
+                math::matrix<double> cG = getWindow(x,y,size,GChannel,RepeatEdge);
+                math::matrix<double> cB = getWindow(x,y,size,BChannel,RepeatEdge);
 
-	double r=morph(oknoR,shape2);
-	double g=morph(oknoG,shape2);
-	double b=morph(oknoB,shape2);
+    double r=morph(cR,shape2);
+    double g=morph(cG,shape2);
+    double b=morph(cB,shape2);
 	 QColor newPixel = QColor(r,g,b);
 			  newImage->setPixel(x,y, newPixel.rgb());
 			   }
@@ -153,10 +150,8 @@ math::matrix<bool> shape2=getSE(size,shape);
            for (int y=0; y<height; y++)
 		
           {
-				QRgb pixel = getPixel(x,y,RepeatEdge); // Getting the pixel(x,y) value
-			//	int v = qGray(pixel); 
-			math::matrix<double> 	oknoL=getWindow(x,y,size,LChannel,RepeatEdge);
-			double v=morph(oknoL,shape2);
+            math::matrix<double> cL=getWindow(x,y,size,LChannel,RepeatEdge);
+            double v=morph(cL,shape2);
 			newImage->setPixel(x,y, v);
 		   }
 	 }

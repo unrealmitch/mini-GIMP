@@ -16,14 +16,9 @@ PNM* NoiseMedian::transform()
     int height = image->height();
 
     PNM* newImage = new PNM(width, height, image->format());
-	Mode mode = RepeatEdge;
     for (int x=0; x<width; x++){
            for (int y=0; y<height; y++){
 		if (image->format() == QImage::Format_RGB32){
-				QRgb pixel = getPixel(x,y,mode);
-				// int r = qRed(pixel);    // Get the 0-255 value of the R channel
-             //   int g = qGreen(pixel);  // Get the 0-255 value of the G channel
-            //    int b = qBlue(pixel);
 			int r=getMedian(x,y,RChannel);
 
 		int 	g=getMedian(x,y,GChannel);
@@ -57,9 +52,6 @@ PNM* NoiseMedian::transform()
 				  
 			 }
 
-				//int average = 0.3 * r + 0.6 * g + 0.1 * b;
-			
-			//	newImage->setPixel(x,y, average);
 			 QColor newPixel = QColor(r,g,b);
 			  newImage->setPixel(x,y, newPixel.rgb()); 
 }
@@ -70,7 +62,7 @@ PNM* NoiseMedian::transform()
            for (int y=0; y<height; y++)
 		
           {
-				QRgb pixel = image->pixel(x,y); // Getting the pixel(x,y) value
+                QRgb pixel = image->pixel(x,y);
 
                 int v = qGray(pixel); 
 				v=getMedian(x,y,LChannel);
@@ -90,22 +82,19 @@ int NoiseMedian::getMedian(int x, int y, Channel channel)
 {
     int radius = getParameter("radius").toInt();
 	Mode mode=	RepeatEdge;
-	int pom=radius*2+1;
-	double tablica[100];
-	int licznik=0;
-   	   math::matrix<double> okno = getWindow(x,y,pom,channel,mode);
-	   //double u=okno(0,0);
-	//  x=(okno.ColNo()-1)*(okno.RowNo()-1); 
+    int pod=radius*2+1;
+    double table[100];
+    int count=0;
+       math::matrix<double> matrix = getWindow(x,y,pod,channel,mode);
 	   
-	   for (int i=0; i<okno.ColNo();i++){
-		   for (int j=0; j<okno.RowNo();j++){
-			   tablica[licznik]=okno(i,j);
-			   licznik++;
+       for (int i=0; i<matrix.ColNo();i++){
+           for (int j=0; j<matrix.RowNo();j++){
+               table[count]=matrix(i,j);
+               count++;
 		   }
 	   }
 	  
-	std::sort(&tablica[0],&tablica[licznik]);
+    std::sort(&table[0],&table[count]);
 
-	//return 7;
-return tablica[licznik/2];
+return table[count/2];
 }

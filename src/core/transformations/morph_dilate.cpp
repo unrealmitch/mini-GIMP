@@ -25,3 +25,4 @@ const int MorphDilate::morph(math::matrix<double> window, math::matrix<bool> se)
 	}
     return min;
 }
+
