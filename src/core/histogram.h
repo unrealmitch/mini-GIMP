@@ -16,6 +16,8 @@ public:
     QHash<int, int>* get(Histogram::Channel);
     QImage           getImage(Histogram::Channel, QBrush);
     int              maximumValue(Channel);
+    int              minimumValue(Channel);
+
 
 private:
     void generate(QImage*); // iterates all parent image pixels and set the Hashes

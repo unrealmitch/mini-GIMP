@@ -83,7 +83,7 @@ void Histogram::generate(QImage* image)
 	}
 }
 
-/** Returns the maximal value of the histogram in the given channel */
+/** Returns the maximal value of the histogram in the given channel*/
 int Histogram::maximumValue(Channel selectedChannel = RGB)
 {
 	QHash<int, int>* channel = Histogram::get(selectedChannel);
@@ -101,10 +101,42 @@ int Histogram::maximumValue(Channel selectedChannel = RGB)
 	{
 		for(iterator = channel->begin(); iterator != channel->end(); iterator++)
 		{
-			if(iterator.value() > maximumValue) maximumValue = iterator.value();
+            if(iterator.value() > maximumValue) maximumValue = iterator.value();
 		}
 	}
 	return maximumValue;
+}
+
+/** Returns the minimal value of the histogram in the given channel
+@author Miguel Caballero*/
+int Histogram::minimumValue(Channel selectedChannel = RGB)
+{
+    QHash<int, int>* channel = Histogram::get(selectedChannel);
+    QHash<int, int>::const_iterator iterator;
+    int minimumValue = 0;
+    if (selectedChannel == RGB)
+    {
+       /* minimumValue = Histogram::minimumValue(RChannel);
+        int temp = Histogram::minimumValue(GChannel);
+        if (temp > minimumValue) minimumValue = temp;
+        temp = Histogram::minimumValue(BChannel);
+        if(temp > maximumValue) maximumValue = temp;*/
+    }
+    else
+    {
+        bool notFound = true;
+        iterator = channel->begin();
+        while(notFound || iterator != channel->end())
+        {
+            if(iterator.key() > 0)
+            {
+                minimumValue = iterator.value();
+                notFound = false;
+            }
+            iterator++;
+        }
+    }
+    return minimumValue;
 }
 
 
